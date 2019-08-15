@@ -44,6 +44,8 @@ const parseBlocks = (html) => {
     let newDaysOffset = daysOffset.map((item) => Math.max(0, item - 1))
     // subject block has a rowspan set
     for (const subject of $("td[rowspan]", row).toArray()) {
+      const isShorter = $("option", subject).length > 0
+
       const realIndex = $(subject).index() - 1
       const targetIndex = realIndex + daysOffset.reduce((memo, acc, index) => memo + (acc > 0 && index <= realIndex), 0)
 
@@ -73,7 +75,10 @@ const parseBlocks = (html) => {
       }, [])
 
       for (const [main, rest] of preparsed) {
-        const [course, type, group, room, ...namerest] = main.trim().split(" ")
+        const split = main.trim().split(" ")
+        if (isShorter) split.splice(1, 0, null)
+
+        const [course, type, group, room, ...namerest] = split
         const detail = [rest, ...namerest].filter(Boolean).join('\n')
         
         // parse week ranges
@@ -86,6 +91,8 @@ const parseBlocks = (html) => {
 
     daysOffset = newDaysOffset
   }
+
+  console.log(blocks)
 
   return mergeBlocks(blocks)
 }
@@ -127,8 +134,13 @@ const generateSchedule = (cal, blocks) => {
       cal.createEvent({
         start: startDate,
         end: endDate,
-        summary: (block.name && `${block.course}: ${block.name} ${block.type} ${block.group}`) || `${block.course} ${block.type} ${block.group}`,
         location: block.room,
+        summary: [
+          block.course,
+          block.name,
+          block.type,
+          block.group,
+        ].filter(Boolean).join(' '),
         description: [
           block.group && `Group: ${block.group}`,
           block.room &&`Location: ${block.room}`,
@@ -143,18 +155,20 @@ const parseExams = (html) => {
   const $ = cheerio.load(html)
   $('html').find('br').replaceWith('\n')
 
-  const [,, exams,] = $("table").toArray()
+  const [,, bigExams, simpleExams] = $("table").toArray()
+  const exams = $("option", bigExams).length ? simpleExams : bigExams
 
   return $("tr:not(:first-child):not(:last-child)", exams).toArray().map(row => {
-    const code = $("td:nth-child(2)", row).text().trim()
-    const date = $("td:nth-child(5)", row).text().trim()
-
+    const isExtended = $("td", row).length > 2
+    const code = $(`td:nth-child(${isExtended ? 2 : 1})`, row).text().trim()
+    const date = $(`td:nth-child(${isExtended ? 5 : 2})`, row).text().trim()
 
     return { code, date }
   })
 }
 
 const generateExams = (cal, exams) => {
+  console.log(exams)
   const timeRegex = /(?<rawBegin>[0-9]{4})-(?<rawEnd>[0-9]{4})/
   for (const { code, date } of exams) {
     const [rawDate, rawTime] = date.split(' ', 2)
