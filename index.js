@@ -1,6 +1,6 @@
-const moment = require('moment')
-const cheerio = require('cheerio')
-const ical = require('ical-generator')
+import moment from 'https://dev.jspm.io/moment'
+import cheerio from 'https://dev.jspm.io/cheerio'
+import ical from 'https://dev.jspm.io/ical-generator'
 
 const startOfSemester = moment('12-08-2019', 'DD-MM-YYYY')
 const recessWeek = moment('30-09-2019', 'DD-MM-YYYY')
@@ -179,7 +179,7 @@ const generateExams = (cal, exams) => {
   }
 }
 
-const generate = (html) => {
+export const generate = (html) => {
   const cal = ical()
   cal.prodId('//duong.cz//ntu-ical//EN')
 
@@ -189,14 +189,3 @@ const generate = (html) => {
   return cal
 }
 
-;(async () => {
-  const fs = require('fs').promises
-  const path = require('path')
-
-  const src = process.argv.slice(2).pop() || '../ntuical/timetable.html'
-  const tgt = path.format({ ...path.parse(src), base: '', ext: '.ical' })
-  
-  const html = await fs.readFile(src)
-  const generated = generate(html)
-  await fs.writeFile(tgt, generated.toString(), { encoding: 'UTF-8' })
-})()
