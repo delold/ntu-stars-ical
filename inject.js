@@ -1,1 +1,1 @@
-import("//cdn.jsdelivr.net/gh/delold/ntu-stars-ical/index.mjs").then(a=>a.download())
+javascript:import("//cdn.jsdelivr.net/gh/delold/ntu-stars-ical/index.mjs").then(a=>a.download())
