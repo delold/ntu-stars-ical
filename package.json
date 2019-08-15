@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "googleapis": "39",
+    "ical-generator": "^1.7.2",
+    "moment": "^2.24.0"
+  }
+}
