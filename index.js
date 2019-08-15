@@ -189,7 +189,7 @@ const generate = (html) => {
   return cal
 }
 
-;(() => {
+export const download = () => {
   const html = document.documentElement.innerHTML
   const payload = `data:text/calendar;base64,${btoa(generate(html).toString())}`
 
@@ -197,4 +197,4 @@ const generate = (html) => {
   downloadLink.href = payload
   downloadLink.download = 'calendar.ical'
   downloadLink.click()
-})();
+}
