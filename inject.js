@@ -1,1 +1,1 @@
-(async () => (await import("https://cdn.jsdelivr.net/gh/delold/ntu-stars-ical@8a6f8b3d45/index.js")).download())();
+import("//cdn.jsdelivr.net/gh/delold/ntu-stars-ical/index.mjs").then(a=>a.download())
