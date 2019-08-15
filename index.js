@@ -179,7 +179,7 @@ const generateExams = (cal, exams) => {
   }
 }
 
-export const generate = (html) => {
+const generate = (html) => {
   const cal = ical()
   cal.prodId('//duong.cz//ntu-ical//EN')
 
@@ -189,3 +189,12 @@ export const generate = (html) => {
   return cal
 }
 
+;(() => {
+  const html = document.documentElement.innerHTML
+  const payload = `data:text/calendar;base64,${btoa(generate(html).toString())}`
+
+  const downloadLink = document.createElement("a")
+  downloadLink.href = payload
+  downloadLink.download = 'calendar.ical'
+  downloadLink.click()
+})();
