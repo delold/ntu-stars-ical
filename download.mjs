@@ -56,8 +56,11 @@ const parseBlocks = (html) => {
       const begin = $("td:first-child", row).text().split('-').shift().trim()
       const end = $("td:first-child", lastrow).text().split('-').pop().trim()
 
+      // trim spaces
+      $(subject).find('br').replaceWith('\n')
+
       const options = $(subject).text().trim().split('\n').filter(item => Boolean(item.trim()));
-      
+
       // split names to separate sections, b/c remarks are merged with block info
       const preparsed = options.reduce((memo, item) => {
         if (!memo.length) {
@@ -92,6 +95,7 @@ const parseBlocks = (html) => {
     daysOffset = newDaysOffset
   }
 
+  blocks.sort((a, b) => a.day.localeCompare(b.day))
   console.log(blocks)
 
   return mergeBlocks(blocks)
